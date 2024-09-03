@@ -1,0 +1,8 @@
+tqdm
+rich
+datasets
+langchain
+python-dotenv
+qdrant-client
+google-generativeai
+sentence-transformers
