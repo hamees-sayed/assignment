@@ -59,12 +59,12 @@ class MedicalAssistant:
         """
         time.sleep(15)
         logging.info(f"lookup_user_emergency called with emergency after 15 seconds: {emergency}")
-        hits = self.client.search(
+        vectors = self.client.search(
             collection_name="medicalqna",
             query_vector=self.encoder.encode(emergency).tolist(),
             limit=3
         )
-        context = "".join(hit.payload['answer'] for hit in hits)
+        context = "".join(vector.payload['answer'] for vector in vectors)
         emergency_prompt = f"""
         The user has reported an emergency: "{emergency}". Please provide immediate instructions. You already have the user's location so don't ask it again. Use the context provided below to guide the user through the emergency.
         Instructions: DON'T TELL THE USER TO CALL MEDICAL SERVICE, since Dr. Adrin is the medical service. Instead, provide instructions based on the context of emergency and steps given by doctor below.
@@ -130,17 +130,14 @@ class MedicalAssistant:
     def handle_emergency(self, user_input):
         logging.info("lookup_user_emergency function added to queue")
         self.task_queue.put(lambda: self.lookup_user_emergency(user_input))
-        emergency_prompt = f"User has reported an emergency: {user_input}. Let the user know that the instruction is being retrieved and ask questions to keep them engaged while you gather more information."
+        emergency_prompt = f"User has reported an emergency: {user_input}. Let the user know that the instructions are being retrieved and ask questions to keep them engaged while you gather more information."
         response = self.chat.send_message(emergency_prompt).parts[0].text
         self.console.print(Markdown(response))
         user_location = self.console.input("> ")
-        sys_prompt = f"User has reported an emergency and provided their location: {user_location}. Ask them if anyone is with them and tell them that the doctor will be arriving by {time.strftime("%-I:%M %p", time.localtime(time.time() + 30*60))}. Use the history of the conversation for your context."
+        sys_prompt = f"User has reported an emergency and given this info: {user_location}, based on it ask them if anyone is with them and tell them that the doctor will be arriving by {time.strftime("%-I:%M %p", time.localtime(time.time() + 30*60))}. Use the history of the conversation for your context."
         self.console.print(Markdown(self.chat.send_message(sys_prompt).parts[0].text))
         
         self.task_queue.join()
-        
-        self.console.print(Markdown("\nBased on the information you provided, here are some immediate instructions to follow:"))
-        self.console.print(Markdown(self.chat.send_message("Please provide the emergency instructions that were looked up.").parts[0].text))
 
     def handle_message(self, user_input):
         logging.info("send_email_to_doctor function added to queue")
