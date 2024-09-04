@@ -43,7 +43,7 @@ class MedicalAssistant:
         GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
         genai.configure(api_key=GOOGLE_API_KEY)
         model = genai.GenerativeModel(
-            model_name='gemini-1.5-pro',
+            model_name='gemini-1.5-pro',  # 'gemini-1.5-pro-latest', 'gemini-1.5-flash', 'gemini-1.5-flash-latest'
             system_instruction=self.load_prompt(),
             tools=[self.lookup_user_emergency, self.send_email_to_doctor],
             safety_settings={
