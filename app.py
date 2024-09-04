@@ -136,7 +136,7 @@ class MedicalAssistant:
         user_location = self.console.input("> ")
         sys_prompt = f"User has reported an emergency and given this info: {user_location}, based on it ask them if anyone is with them and tell them that the doctor will be arriving by {time.strftime('%-I:%M %p', time.localtime(time.time() + 30*60))}. Use the history of the conversation for your context."
         self.console.print(Markdown(self.chat.send_message(sys_prompt).parts[0].text))
-        
+
         # Signal that user input is provided, resume background task
         self.input_ready_event.set()
         self.task_queue.join()
