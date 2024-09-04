@@ -37,7 +37,7 @@ This project implements an AI-powered medical emergency assistant using Google's
 
 - `requirements.txt`: Lists all the Python dependencies
 - `prompt.txt`: Contains the system prompt for the AI assistant
-- `receptionist.py`: Main script that runs the AI assistant
+- `app.py`: Main script that runs the AI assistant
 - `db.ipynb`: Jupyter notebook for initializing and populating the Qdrant database (already initialized, run this if you have your own dataset)
 
 ## Usage
